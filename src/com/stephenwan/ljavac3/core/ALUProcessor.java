@@ -81,12 +81,26 @@ public class ALUProcessor {
 			}
 			case JMP:
 			{
-				// not implemented
+				int br = (int)Long.parseLong(sOperands.substring(3,6), 2);
+				int brc = (int)Long.parseLong(alu.core.getRegister(br), 2);
+				alu.core.pc = brc;
 				break;
 			}
 			case JSR:
 			{
-				// not implemented
+				boolean check = (sOperands.charAt(0) == '1');
+				if (check)
+				{
+					// JSR
+					alu.core.pc += (int)Long.parseLong(Tools.sext(sOperands.substring(1)), 2);
+				}
+				else
+				{
+					// JSRR
+					int br = (int)Long.parseLong(sOperands.substring(3,6), 2);
+					int brc = (int)Long.parseLong(alu.core.getRegister(br), 2);
+					alu.core.pc = brc;
+				}
 				break;
 			}
 			case LD:
@@ -180,6 +194,8 @@ public class ALUProcessor {
 			case TRAP:
 			{
 				int vector = (int)Long.parseLong(sOperands.substring(4));
+				if (vector != 37)
+					System.out.println("Sorry only x25 is implemented at this time :(");
 				// we should go to the trap vector, but it's not implemented
 				// let's just hope it's a halt (x25)... :(
 				alu.executing = false;
