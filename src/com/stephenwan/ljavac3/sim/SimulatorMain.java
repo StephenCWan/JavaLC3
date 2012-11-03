@@ -16,8 +16,7 @@ public class SimulatorMain {
 	
 	public static void main(String[] args) throws LC3Exception
 	{
-		System.out.print("Machine Initializing..." +
-				"");
+		System.out.print("Machine Initializing...");
 		core = new Core();
 		System.out.println(" [OK]\n");
 		core.writeMemory((int)Long.parseLong("30FF", 16), ("1111000011110000"));
@@ -35,7 +34,7 @@ public class SimulatorMain {
 		core.alu.continueExecution();
 		System.out.println(" [OK]");
 
-		System.out.println("Executed " + core.alu.processed + " instruction(s)\n");
+		System.out.println("Executed " + core.alu.cycleCounter + " instruction(s)\n");
 		System.out.println("Memory Dump");
 		System.out.println("x3101 = " + core.getMemory((int)Long.parseLong("3101", 16)));
 	}
@@ -62,6 +61,6 @@ public class SimulatorMain {
 	}
 	public static void dumpState()
 	{
-		pl("\t" + Arrays.toString(core.registers) + " : " + core.alu.processed);
+		pl("\t" + Arrays.toString(core.registers) + " : " + core.alu.cycleCounter);
 	}
 }

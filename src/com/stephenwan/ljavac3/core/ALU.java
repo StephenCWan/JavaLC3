@@ -13,7 +13,7 @@ public class ALU {
 	
 	Core core;
 	ALUProcessor processor;
-	public int processed;
+	public int cycleCounter;
 	public boolean executing;
 
 	public void continueExecution() throws LC3Exception
@@ -25,14 +25,17 @@ public class ALU {
 	public void handleExecution() throws LC3Exception
 	{
 		while (executing)
-		{
-			fetch();
-			System.out.println("Executing instruction: " + core.ir);
-			processor.execInstruction(core.ir);
-			SimulatorMain.dumpState();
-			System.out.println();
-			processed++;
-		}
+			executeCycle();
+	}
+	
+	public void executeCycle()
+	{
+		fetch();
+		System.out.println("Executing instruction: " + core.ir);
+		processor.execInstruction(core.ir);
+		SimulatorMain.dumpState();
+		System.out.println();
+		cycleCounter++;
 	}
 	
 	public void fetch()

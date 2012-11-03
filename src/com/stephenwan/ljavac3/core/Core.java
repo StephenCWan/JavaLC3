@@ -26,37 +26,45 @@ public class Core {
 	
 	public void movePC(int position)
 	{
+		// pc = program counter
 		this.pc = position;
 	}
 	
 	public void movePCRelative(int position)
 	{
+		// pc = program counter
 		this.pc += position;
 	}
 	
 	public void setIR(String instr)
 	{
+		// IR = instruction register
 		this.ir = instr;
 	}
 	
 	public void writeRegister(int index, String content) throws LC3Exception
 	{
 		
-		String result = Tools.zext(content).substring(16);
+		String result = Tools.zext(content).substring(16); // make sure register is correct length
 		
-		if (result.startsWith("0")) { nzpflags = 1; }
-		if (result.startsWith("1")) { nzpflags = 4; }
-		if (((int)Long.parseLong(result)) == 0) { nzpflags = 2; }
+		// set nzp (cc) flags
+		
+		if (result.startsWith("0")) { nzpflags = 1; } // 001
+		if (result.startsWith("1")) { nzpflags = 4; } // 100
+		if (((int)Long.parseLong(result)) == 0) { nzpflags = 2; } // 010
 		
 		this.registers[index] = result;
 	}
+	
 	public String getRegister(int index)
 	{
 		return this.registers[index];
 	}
+	
 	public void writeMemory(int index, String content)
 	{
 		// can only write user memory
+		// this is a simplification of what the LC3 actually does
 		if (index >= (int)Long.parseLong("FE00", 16) || index <= (int)Long.parseLong("01FF", 16))
 		{
 			throw new LC3Exception("The address x" + Integer.toHexString(index) + " cannot be written to");
@@ -64,6 +72,7 @@ public class Core {
 		
 		this.memory.put(index, Tools.zext(content).substring(16));
 	}
+	
 	public String getMemory(int index)
 	{
 		if (index >= (int)Long.parseLong("FE00", 16))

@@ -14,6 +14,7 @@ public class ALUProcessor {
 	}
 	public static String[] InstructionT = { "BR", "ADD", "LD", "ST", "JSR", "AND", "LDR", "STR", "RTI", "NOT", "LDI", "STI", "JMP", "INVALID", "LEA", "TRAP" };
 	
+	
 	public ALU alu;
 	public Instruction[] cache;
 	
@@ -27,20 +28,26 @@ public class ALUProcessor {
 			case ADD:
 			{
 				
-				int dr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
-				int sr = (int)Long.parseLong(sOperands.substring(3, 6), 2);
-				int sr1c = (int)Long.parseLong(alu.core.getRegister(sr), 2);
+				// ADD has two different formats with common destination/source 1 registers
+				
+				int dr = Tools.bin2Int(sOperands.substring(0, 3));
+				int sr = Tools.bin2Int(sOperands.substring(3, 6));
+				int sr1c = Tools.bin2Int(alu.core.getRegister(sr));
+				
+				// 0001 [DR, SR1, 000, SR2]
 				if (sOperands.charAt(6) == '0')
 				{
-					int sr2 = (int)Long.parseLong(sOperands.substring(9), 2);	
-					int sr2c = (int)Long.parseLong(alu.core.getRegister(sr2), 2);
+					int sr2 = Tools.bin2Int(sOperands.substring(9));	
+					int sr2c = Tools.bin2Int(alu.core.getRegister(sr2));
 					String result = Integer.toBinaryString(sr1c + sr2c);
 					
 					alu.core.writeRegister(dr, result);
 				}
+				
+				// 0001 [DR, SR1, 1, imm5]
 				else
 				{
-					int immediate = (int)Long.parseLong(Tools.sext(sOperands.substring(7)), 2);
+					int immediate = Tools.bin2Int(Tools.sext(sOperands.substring(7)));
 					String result = Integer.toBinaryString(sr1c + immediate);
 					
 					alu.core.writeRegister(dr, result);
@@ -50,29 +57,37 @@ public class ALUProcessor {
 			}
 			case AND:
 			{
-				int dr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
-				int sr = (int)Long.parseLong(sOperands.substring(3, 6), 2);
-				int sr1c = (int)Long.parseLong(alu.core.getRegister(sr), 2);
+				
+				// AND has two different instruction formats, similar to ADD
+				
+				int dr = Tools.bin2Int(sOperands.substring(0, 3));
+				int sr = Tools.bin2Int(sOperands.substring(3, 6));
+				int sr1c = Tools.bin2Int(alu.core.getRegister(sr));
+				
+				// 0101 [DR, SR1, 000, SR2]
 				if (sOperands.charAt(6) == '0')
 				{
-					int sr2 = (int)Long.parseLong(sOperands.substring(9), 2);	
-					int sr2c = (int)Long.parseLong(alu.core.getRegister(sr2), 2);
+					int sr2 = Tools.bin2Int(sOperands.substring(9));	
+					int sr2c = Tools.bin2Int(alu.core.getRegister(sr2));
 					String result = Integer.toBinaryString(sr1c & sr2c);
 					
 					alu.core.writeRegister(dr, result);
 				}
+				
+				// 0101 [DR, SR1, 1, imm5]
 				else
 				{
-					int immediate = (int)Long.parseLong(Tools.sext(sOperands.substring(7)), 2);
+					int immediate = Tools.bin2Int(Tools.sext(sOperands.substring(7)));
 					String result = Integer.toBinaryString(sr1c & immediate);
 					
 					alu.core.writeRegister(dr, result);
 				}
+				
 				break;
 			}
 			case BR:
 			{
-				int offset = (int)Long.parseLong(Tools.sext(sOperands.substring(3)), 2);
+				int offset = Tools.bin2Int(Tools.sext(sOperands.substring(3)));
 				if ((Integer.parseInt(sOperands.substring(0,3), 2) & alu.core.nzpflags) > 0)
 				{
 					alu.core.movePCRelative(offset);
@@ -81,8 +96,8 @@ public class ALUProcessor {
 			}
 			case JMP:
 			{
-				int br = (int)Long.parseLong(sOperands.substring(3,6), 2);
-				int brc = (int)Long.parseLong(alu.core.getRegister(br), 2);
+				int br = Tools.bin2Int(sOperands.substring(3,6));
+				int brc = Tools.bin2Int(alu.core.getRegister(br));
 				alu.core.pc = brc;
 				break;
 			}
@@ -92,21 +107,21 @@ public class ALUProcessor {
 				if (check)
 				{
 					// JSR
-					alu.core.pc += (int)Long.parseLong(Tools.sext(sOperands.substring(1)), 2);
+					alu.core.pc += Tools.bin2Int(Tools.sext(sOperands.substring(1)));
 				}
 				else
 				{
 					// JSRR
-					int br = (int)Long.parseLong(sOperands.substring(3,6), 2);
-					int brc = (int)Long.parseLong(alu.core.getRegister(br), 2);
+					int br = Tools.bin2Int(sOperands.substring(3,6));
+					int brc = Tools.bin2Int(alu.core.getRegister(br));
 					alu.core.pc = brc;
 				}
 				break;
 			}
 			case LD:
 			{
-				int dr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
-				int offset = (int)Long.parseLong(Tools.sext(sOperands.substring(3)), 2);
+				int dr = Tools.bin2Int(sOperands.substring(0, 3));
+				int offset = Tools.bin2Int(Tools.sext(sOperands.substring(3)));
 				
 				String result = alu.core.getMemory(offset + alu.core.pc);
 				
@@ -115,19 +130,19 @@ public class ALUProcessor {
 			}
 			case LDI:
 			{
-				int dr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
-				int offset = (int)Long.parseLong(Tools.sext(sOperands.substring(3)), 2);
-				String result = alu.core.getMemory((int)Long.parseLong(alu.core.getMemory(offset + alu.core.pc), 2));
+				int dr = Tools.bin2Int(sOperands.substring(0, 3));
+				int offset = Tools.bin2Int(Tools.sext(sOperands.substring(3)));
+				String result = alu.core.getMemory(Tools.bin2Int(alu.core.getMemory(offset + alu.core.pc)));
 				
 				alu.core.writeRegister(dr, result);
 				break;
 			}
 			case LDR:
 			{
-				int dr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
-				int baser = (int)Long.parseLong(sOperands.substring(3, 6), 2);
-				int basercontent = (int)Long.parseLong(alu.core.getRegister(baser));
-				int offset = (int)Long.parseLong(Tools.sext(sOperands.substring(6)), 2);
+				int dr = Tools.bin2Int(sOperands.substring(0, 3));
+				int baser = Tools.bin2Int(sOperands.substring(3, 6));
+				int basercontent = Tools.bin2Int(alu.core.getRegister(baser));
+				int offset = Tools.bin2Int(Tools.sext(sOperands.substring(6)));
 				
 				String result = alu.core.getMemory(baser + offset);
 			
@@ -136,8 +151,8 @@ public class ALUProcessor {
 			}
 			case LEA:
 			{
-				int dr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
-				int offset = (int)Long.parseLong(Tools.sext(sOperands).substring(3), 2);
+				int dr = Tools.bin2Int(sOperands.substring(0, 3));
+				int offset = Tools.bin2Int(Tools.sext(sOperands).substring(3));
 				String result = Integer.toBinaryString(alu.core.pc + offset);
 				
 				alu.core.writeRegister(dr, result);
@@ -145,9 +160,9 @@ public class ALUProcessor {
 			}
 			case NOT:
 			{
-				int dr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
-				int sr = (int)Long.parseLong(sOperands.substring(3, 6), 2);
-				int data = ~(int)Long.parseLong(alu.core.getRegister(sr));
+				int dr = Tools.bin2Int(sOperands.substring(0, 3));
+				int sr = Tools.bin2Int(sOperands.substring(3, 6));
+				int data = ~Tools.bin2Int(alu.core.getRegister(sr));
 				
 				String result = Integer.toBinaryString(data);
 				
@@ -161,31 +176,31 @@ public class ALUProcessor {
 			}
 			case ST:
 			{
-				int sr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
+				int sr = Tools.bin2Int(sOperands.substring(0, 3));
 				String src = alu.core.getRegister(sr);
-				int offset = (int)Long.parseLong(Tools.sext(sOperands.substring(3)), 2);
+				int offset = Tools.bin2Int(Tools.sext(sOperands.substring(3)));
 				
 				alu.core.writeMemory(alu.core.pc + offset, src);
 				break;
 			}
 			case STI:
 			{
-				int sr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
+				int sr = Tools.bin2Int(sOperands.substring(0, 3));
 				String src = alu.core.getRegister(sr);
-				int offset = (int)Long.parseLong(Tools.sext(sOperands.substring(3)), 2);
+				int offset = Tools.bin2Int(Tools.sext(sOperands.substring(3)));
 				
-				int location = (int)Long.parseLong(alu.core.getMemory(alu.core.pc + offset), 2);
+				int location = Tools.bin2Int(alu.core.getMemory(alu.core.pc + offset));
 				
 				alu.core.writeMemory(location, src);
 				break;
 			}
 			case STR:
 			{
-				int sr = (int)Long.parseLong(sOperands.substring(0, 3), 2);
+				int sr = Tools.bin2Int(sOperands.substring(0, 3));
 				String src = alu.core.getRegister(sr);
-				int baser = (int)Long.parseLong(sOperands.substring(3, 6), 2);
-				int basercontent = (int)Long.parseLong(alu.core.getRegister(baser));
-				int offset = (int)Long.parseLong(sOperands.substring(6), 2);
+				int baser = Tools.bin2Int(sOperands.substring(3, 6));
+				int basercontent = Tools.bin2Int(alu.core.getRegister(baser));
+				int offset = Tools.bin2Int(sOperands.substring(6));
 				
 				alu.core.writeMemory(basercontent + offset, src);
 				
@@ -193,7 +208,7 @@ public class ALUProcessor {
 			}
 			case TRAP:
 			{
-				int vector = (int)Long.parseLong(sOperands.substring(4));
+				int vector = Tools.bin2Int(sOperands.substring(4));
 				if (vector != 37)
 					System.out.println("Sorry only x25 is implemented at this time :(");
 				// we should go to the trap vector, but it's not implemented
@@ -204,6 +219,7 @@ public class ALUProcessor {
 			default:
 			{
 				// uh oh
+				throw new LC3Exception("Unknown opcode '" + opcode + "' was received by the processing unit");
 			}
 		}
 		
