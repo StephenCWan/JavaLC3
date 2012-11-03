@@ -17,7 +17,7 @@ public class ALUProcessor {
 	public ALU alu;
 	public Instruction[] cache;
 	
-	public void execInstruction(String content)
+	public void execInstruction(String content) throws LC3Exception
 	{
 		Instruction opcode = cache[Integer.parseInt(content.substring(0, 4), 2)];
 		String sOperands = content.substring(4);
@@ -73,7 +73,7 @@ public class ALUProcessor {
 			case BR:
 			{
 				int offset = (int)Long.parseLong(Tools.sext(sOperands.substring(3)), 2);
-				if (sOperands.charAt(0) == '1' && alu.core.n || sOperands.charAt(1) == '1' && alu.core.z || sOperands.charAt(2) == '1' && alu.core.p)
+				if ((Integer.parseInt(sOperands.substring(0,3), 2) & alu.core.nzpflags) > 0)
 				{
 					alu.core.movePCRelative(offset);
 				}

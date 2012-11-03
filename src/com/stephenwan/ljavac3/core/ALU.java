@@ -16,13 +16,13 @@ public class ALU {
 	public int processed;
 	public boolean executing;
 
-	public void continueExecution()
+	public void continueExecution() throws LC3Exception
 	{
 		executing = true;
 		handleExecution();
 	}
 	
-	public void handleExecution()
+	public void handleExecution() throws LC3Exception
 	{
 		while (executing)
 		{
