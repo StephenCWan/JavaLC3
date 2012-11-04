@@ -9,21 +9,21 @@ public class LC3Bridge {
 	
 	private Core _core;
 	
-	public void writeMemory(int index, int memory)
+	public void writeMemory(int index, String memory)
 	{
 		_core.writeMemory(index, memory);
 	}
 	
-	public int readMemory(int index)
+	public String readMemory(int index)
 	{
 		return _core.getMemory(index);
 	}
 	
-	public void writeRegister(int index, int content)
+	public void writeRegister(int index, String content)
 	{
 		_core.writeRegister(index, content);
 	}
-	public int readRegister(int index)
+	public String readRegister(int index)
 	{
 		return _core.getRegister(index);
 	}

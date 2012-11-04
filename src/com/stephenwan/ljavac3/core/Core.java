@@ -4,12 +4,6 @@ import java.util.TreeMap;
 
 public class Core {
 	
-	//
-	// In this implementation we must use integers rather than shorts to carry our data. This is because
-	// java shorts are only signed, and cannot be used without severe casting in code that requires operations
-	// on the data
-	//
-	
 	public Core()
 	{
 		this.initialize();
@@ -17,16 +11,16 @@ public class Core {
 	
 	public void initialize()
 	{
-		registers = new int[8];
-		memory = new TreeMap<Integer, Integer>();
+		registers = new String[8];
+		memory = new TreeMap<Integer, String>();
 		alu = new ALU(this);
 	}
 	
 	public ALU alu;
-	public int[] registers;
+	public String[] registers;
 	public int pc;
 	public String ir;
-	public TreeMap<Integer, Integer> memory;
+	public TreeMap<Integer, String> memory;
 	public byte nzpflags;
 	
 	
@@ -42,41 +36,32 @@ public class Core {
 		this.pc += position;
 	}
 	
-	public void setIR(int instr)
+	public void setIR(String instr)
 	{
 		// IR = instruction register
-		this.ir = Tools.int2bin(instr);
+		this.ir = instr;
 	}
 	
-	public void writeRegister(int index, String content)
+	public void writeRegister(int index, String content) throws LC3Exception
 	{
+		
 		String result = Tools.zext(content).substring(16); // make sure register is correct length
-		writeRegister(index, Tools.bin2int(result));
-	}
-	
-	public void writeRegister(int index, int content) throws LC3Exception
-	{
 		
 		// set nzp (cc) flags
-		short contents = (short)content;
-		if (contents > 0) { nzpflags = 1; } // 001
-		if (contents < 0) { nzpflags = 4; } // 100
-		if (contents == 0) { nzpflags = 2; } // 010
 		
-		this.registers[index] = content;
+		if (result.startsWith("0")) { nzpflags = 1; } // 001
+		if (result.startsWith("1")) { nzpflags = 4; } // 100
+		if (((int)Long.parseLong(result)) == 0) { nzpflags = 2; } // 010
+		
+		this.registers[index] = result;
 	}
 	
-	public int getRegister(int index)
+	public String getRegister(int index)
 	{
 		return this.registers[index];
 	}
 	
 	public void writeMemory(int index, String content)
-	{
-		writeMemory(index, Tools.bin2int(Tools.zext(content).substring(16)));
-	}
-	
-	public void writeMemory(int index, int content)
 	{
 		// can only write user memory
 		// this is a simplification of what the LC3 actually does
@@ -85,30 +70,27 @@ public class Core {
 			throw new LC3Exception("The address x" + Integer.toHexString(index) + " cannot be written to");
 		}
 		
-		this.memory.put(index, content);
+		this.memory.put(index, Tools.zext(content).substring(16));
 	}
 	
-	public int getMemory(int index)
+	public String getMemory(int index)
 	{
-		// this will eventually need to be replaced by the memory protection table
-		// and checks against the supervisor mode
-		// the psr needs to be implementd still
 		if (index >= (int)Long.parseLong("FE00", 16))
 		{
 			// get from device registers
-			return 0;
+			return Tools.sext("0");
 		}
 		else if (index <= (int)Long.parseLong("01FF", 16))
 		{
 			// these memory locations are from the OS stack
-			return 0;
+			return Tools.sext("0");
 		}
 		else
 		{
 			// these locations are in the user program memory area
 			if (memory.containsKey(index))
 				return memory.get(index);
-			return 0;
+			return Tools.zext("0", 16);
 		}
 	}
 	

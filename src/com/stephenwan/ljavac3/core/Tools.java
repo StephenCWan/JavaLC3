@@ -35,14 +35,14 @@ public class Tools {
 	{
 		// if the number of hex...
 		if (input.toLowerCase().startsWith("x"))
-			return hex2int(input);
+			return hex2Int(input);
 		
 		// all other cases... (including decimals prefixed with #)
 		else
 			return (int)Long.parseLong(input.replaceAll("[#]", ""));
 	}
 	
-	public static int bin2int(String binary)
+	public static int bin2Int(String binary)
 	{
 		// The binary string is parsed as a long due to limitations
 		// of the Java Integer class; Integer.parseInt() will not take a 32
@@ -54,13 +54,9 @@ public class Tools {
 		//
 		return (int)Long.parseLong(binary, 2);
 	}
-	public static int hex2int(String binary)
+	public static int hex2Int(String binary)
 	{
-		// see note on bin2int
+		// see note on bin2Int
 		return (int)Long.parseLong(binary, 16);
-	}
-	public static String int2bin(int content)
-	{
-		return zext(Integer.toBinaryString(content), 16);
 	}
 }
