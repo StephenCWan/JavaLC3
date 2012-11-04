@@ -49,8 +49,8 @@ public class ALUProcessor {
 				{
 					int immediate = Tools.bin2int(Tools.sext(sOperands.substring(7)));
 					String result = Integer.toBinaryString(sr1c + immediate);
-					System.out.println(sr1c + " + " + immediate +  " = " + (sr1c + immediate));
-					System.out.println(Integer.toBinaryString(sr1c) + " + " + Integer.toBinaryString(immediate) + " = " + result); 
+					//System.out.println(sr1c + " + " + immediate +  " = " + (sr1c + immediate));
+					//System.out.println(Integer.toBinaryString(sr1c) + " + " + Integer.toBinaryString(immediate) + " = " + result); 
 					alu.core.writeRegister(dr, result);
 				}
 				break;
@@ -89,7 +89,7 @@ public class ALUProcessor {
 			case BR:
 			{
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(3)));
-				if ((Integer.parseInt(sOperands.substring(0,3), 2) & alu.core.nzpflags) > 0)
+				if ((Integer.parseInt(sOperands.substring(0,3), 2) & alu.core.nzpFlags) > 0)
 				{
 					alu.core.movePCRelative(offset);
 				}

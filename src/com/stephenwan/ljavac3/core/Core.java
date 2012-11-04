@@ -27,7 +27,9 @@ public class Core {
 	public int pc;
 	public String ir;
 	public TreeMap<Integer, Integer> memory;
-	public byte nzpflags;
+	public byte nzpFlags;
+	public boolean supervisorMode;
+	public byte priorityLevel;
 	
 	
 	public void movePC(int position)
@@ -59,9 +61,9 @@ public class Core {
 		
 		// set nzp (cc) flags
 		short contents = (short)content;
-		if (contents > 0) { nzpflags = 1; } // 001
-		if (contents < 0) { nzpflags = 4; } // 100
-		if (contents == 0) { nzpflags = 2; } // 010
+		if (contents > 0) { nzpFlags = 1; } // 001
+		if (contents < 0) { nzpFlags = 4; } // 100
+		if (contents == 0) { nzpFlags = 2; } // 010
 		
 		this.registers[index] = content;
 	}

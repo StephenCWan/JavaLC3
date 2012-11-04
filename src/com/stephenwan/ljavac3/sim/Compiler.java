@@ -11,6 +11,7 @@ import com.stephenwan.ljavac3.core.ALU;
 import com.stephenwan.ljavac3.core.ALUProcessor;
 import com.stephenwan.ljavac3.core.ALUProcessor.Instruction;
 import com.stephenwan.ljavac3.core.Tools;
+import com.stephenwan.ljavac3.sim.CompilerTools.OperandType;
 
 public class Compiler {
 	
@@ -23,7 +24,7 @@ public class Compiler {
 		int counter = 0;
 		while (sc.hasNext())
 		{
-			String[] d = sc.nextLine().split(";")[0].split(" +");
+			String[] d = sc.nextLine().toUpperCase().split(";")[0].split("[\\s,]+");
 			int sindex = 0;
 			if (Arrays.asList(ALUProcessor.InstructionT).contains(d[1]))
 			{
@@ -38,6 +39,18 @@ public class Compiler {
 			{
 				case ADD:
 				{
+					String output = "0001";
+					output += Tools.zext(CompilerTools.getRegisterNumber(d[sindex + 1]) + "", 3);
+					output += Tools.zext(CompilerTools.getRegisterNumber(d[sindex + 2]) + "", 3);
+					
+					// register mode
+					if (CompilerTools.differentiateType(d[sindex + 3]) == OperandType.Register)
+						output += "000" + Tools.zext(CompilerTools.getRegisterNumber(d[sindex + 3]) + "", 3);
+					// immediate mode
+					else
+						output += "1" + d[sindex + 3];
+					
+					data.add(output);
 					break;
 					
 				}
