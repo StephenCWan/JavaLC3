@@ -26,8 +26,8 @@ public class SimulatorMain {
 		System.out.println("x3100 = " + core.getMemory((int)Long.parseLong("3100", 16)));
 
 		System.out.print("\nLoading binary program...");
-		//binLoader("/Users/stephen/Desktop/leftrotate.bin");
-		binLoader("C:/Users/Stephen/Desktop/Git/JavaLC3/bin/com/stephenwan/ljavac3/sim/leftrotate.bin");
+		binLoader("/Users/stephen/Desktop/leftrotate.bin");
+		//binLoader("C:/Users/Stephen/Desktop/Git/JavaLC3/bin/com/stephenwan/ljavac3/sim/leftrotate.bin");
 		System.out.println(" [OK]");
 
 		System.out.print("Executing program... ");
