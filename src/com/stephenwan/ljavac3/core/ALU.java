@@ -42,7 +42,7 @@ public class ALU {
 	
 	{
 		int pc = core.pc;
-		String nIR = core.getMemory(pc);
+		int nIR = core.getMemory(pc);
 		core.setIR(nIR);
 		core.pc++;
 		
