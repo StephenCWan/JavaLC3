@@ -13,7 +13,7 @@ public class ALUProcessor {
 		BR, ADD, LD, ST, JSR, AND, LDR, STR, RTI, NOT, LDI, STI, JMP, INVALID, LEA, TRAP
 	}
 	public static String[] InstructionT = { "BR", "ADD", "LD", "ST", "JSR", "AND", "LDR", "STR", "RTI", "NOT", "LDI", "STI", "JMP", "INVALID", "LEA", "TRAP" };
-	
+	public static String[] InstructionMatchers = { "BRn{0-1}z{0-1}p{0-1}", "ADD", "LD", "ST", "JSR", "AND", "LDR", "STR", "RTI", "NOT", "LDI", "STI", "JMP", "INVALID", "LEA", "TRAP" };
 	
 	public ALU alu;
 	public Instruction[] cache;

@@ -1,5 +1,8 @@
 package com.stephenwan.ljavac3.sim;
 
+import java.util.List;
+
+import com.stephenwan.ljavac3.core.ALUProcessor;
 import com.stephenwan.ljavac3.core.Tools;
 
 public class CompilerTools {
@@ -37,5 +40,17 @@ public class CompilerTools {
 			return OperandType.Register;
 		else
 			return OperandType.Number;
+	}
+	
+	public static ALUProcessor.Instruction findOpcode(String opcode)
+	{
+		ALUProcessor.Instruction[] cache = ALUProcessor.Instruction.values();
+		for (int i = 0; i < cache.length; i++)
+		{
+			String matcher = ALUProcessor.InstructionMatchers[i];
+			if (opcode.matches(matcher))
+				return cache[i];
+		}
+		return ALUProcessor.Instruction.INVALID;
 	}
 }

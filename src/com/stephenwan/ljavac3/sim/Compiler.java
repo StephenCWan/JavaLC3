@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -24,22 +25,31 @@ public class Compiler {
 		int counter = 0;
 		while (sc.hasNext())
 		{
+			counter++;
+			
 			String[] d = sc.nextLine().toUpperCase().split(";")[0].split("[\\s,]+");
 			int sindex = 0;
-			if (Arrays.asList(ALUProcessor.InstructionT).contains(d[1]))
+			List instlist = Arrays.asList(ALUProcessor.InstructionT);
+			
+			if (CompilerTools.findOpcode(d[0]) != ALUProcessor.Instruction.INVALID)
+				sindex = 0;
+			else if (CompilerTools.findOpcode(d[1]) != ALUProcessor.Instruction.INVALID)
 			{
-				// label is present
-				map.put(d[0], counter);
 				sindex = 1;
+				map.put(d[0], counter);
 			}
+			else
+				throw new CompilerException("Could not parse line " + counter + "");
+			
+			String opcodestring = d[sindex];
 			Instruction iopcode = Instruction.valueOf(d[sindex]);
-			String bipcode = Tools.zext(Integer.toBinaryString(Arrays.asList(Instruction.values()).indexOf(iopcode)), 4);
+			String bopcode = Tools.zext(Integer.toBinaryString(Arrays.asList(Instruction.values()).indexOf(iopcode)), 4);
 			
 			switch (iopcode)
 			{
 				case ADD:
 				{
-					String output = "0001";
+					String output = bopcode;
 					output += Tools.zext(CompilerTools.getRegisterNumber(d[sindex + 1]) + "", 3);
 					output += Tools.zext(CompilerTools.getRegisterNumber(d[sindex + 2]) + "", 3);
 					
@@ -56,7 +66,18 @@ public class Compiler {
 				}
 				case AND:
 				{
+					String output = bopcode;
+					output += Tools.zext(CompilerTools.getRegisterNumber(d[sindex + 1]) + "", 3);
+					output += Tools.zext(CompilerTools.getRegisterNumber(d[sindex + 2]) + "", 3);
 					
+					// register mode
+					if (CompilerTools.differentiateType(d[sindex + 3]) == OperandType.Register)
+						output += "000" + Tools.zext(CompilerTools.getRegisterNumber(d[sindex + 3]) + "", 3);
+					// immediate mode
+					else
+						output += "1" + d[sindex + 3];
+					
+					data.add(output);
 					break;
 				}
 				case BR:
@@ -129,8 +150,6 @@ public class Compiler {
 					// uh oh
 				}
 			}
-			
-			counter++;
 		}
 		
 		
