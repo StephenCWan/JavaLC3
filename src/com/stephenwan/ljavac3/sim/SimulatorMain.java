@@ -20,10 +20,10 @@ public class SimulatorMain {
 		core = new Core();
 		System.out.println(" [OK]\n");
 		core.writeMemory((int)Long.parseLong("30FF", 16), ("1111000011110000"));
-		core.writeMemory((int)Long.parseLong("3100", 16), ("0000000000001111"));
+		core.writeMemory((int)Long.parseLong("3100", 16), ("0000000000000100"));
 		System.out.println("Setting memory...");
-		System.out.println("x30FF = " + core.getMemory((int)Long.parseLong("30FF", 16)));
-		System.out.println("x3100 = " + core.getMemory((int)Long.parseLong("3100", 16)));
+		System.out.println("x30FF = " + Tools.int2bin(core.getMemory((int)Long.parseLong("30FF", 16))));
+		System.out.println("x3100 = " + Tools.int2bin(core.getMemory((int)Long.parseLong("3100", 16))));
 
 		System.out.print("\nLoading binary program...");
 		binLoader("/Users/stephen/Desktop/leftrotate.bin");
@@ -36,7 +36,7 @@ public class SimulatorMain {
 
 		System.out.println("Executed " + core.alu.cycleCounter + " instruction(s)\n");
 		System.out.println("Memory Dump");
-		System.out.println("x3101 = " + core.getMemory((int)Long.parseLong("3101", 16)));
+		System.out.println("x3101 = " + Tools.int2bin(core.getMemory((int)Long.parseLong("3101", 16))));
 	}
 	
 	public static void binLoader(String file)
@@ -61,6 +61,10 @@ public class SimulatorMain {
 	}
 	public static void dumpState()
 	{
-		pl("\t" + Arrays.toString(core.registers) + " : " + core.alu.cycleCounter);
+		String l = "[";
+		for (int i = 0; i < core.registers.length; i++)
+			l += Tools.int2bin(core.registers[i]) + (i + 1 == core.registers.length ? "" : ", ");
+		l += "]";
+		pl("\t" + l + " : " + core.alu.cycleCounter);
 	}
 }
