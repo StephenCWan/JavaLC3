@@ -19,12 +19,22 @@ package com.stephenwan.ljavac3.core;
 
 public class LC3Bridge {
 
+	public int getProcessedCycles()
+	{
+		return _core.alu.cycleCounter;
+	}
+	
 	public LC3Bridge()
 	{
 		_core = new Core();
 	}
 	
 	private Core _core;
+	
+	public void setPC(int location)
+	{
+		_core.pc = location;
+	}
 	
 	public void writeMemory(int index, int memory)
 	{
@@ -53,5 +63,14 @@ public class LC3Bridge {
 	public void continueExecution()
 	{
 		_core.alu.continueExecution();
+	}
+
+	public void dumpState()
+	{
+		String l = "[";
+		for (int i = 0; i < _core.registers.length; i++)
+			l += Tools.int2bin(_core.registers[i]) + (i + 1 == _core.registers.length ? "" : ", ");
+		l += "]";
+		System.out.println("\t" + l + " : " + _core.alu.cycleCounter);
 	}
 }

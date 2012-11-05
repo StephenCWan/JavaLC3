@@ -30,7 +30,7 @@ public class Tools {
 	public static String sext(String input, int length)
 	{
 		// sign extension adds multiple of the sign bit to the beginning to pad the length
-		while (input.length() != length)
+		while (input.length() < length)
 			input = ("" + input.charAt(0)) + input;
 		return input;
 	}
@@ -43,7 +43,7 @@ public class Tools {
 	public static String zext(String input, int length)
 	{
 		// zero extension adds 0's to the beginning to pad the length
-		while (input.length() != length)
+		while (input.length() < length)
 			input = ("0") + input;
 		return input;
 	}
@@ -79,5 +79,9 @@ public class Tools {
 	public static String int2bin(int content)
 	{
 		return zext(Integer.toBinaryString(content), 16);
+	}
+	public static String byte2bin(byte content)
+	{
+		return zext(Integer.toBinaryString(content & 0xFF), 8);
 	}
 }

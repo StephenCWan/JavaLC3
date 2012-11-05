@@ -48,11 +48,10 @@ public class ALU {
 	public void executeCycle()
 	{
 		fetch();
-		System.out.println("Executing instruction: " + core.ir);
+		//System.out.println("Executing instruction: " + core.ir);
 		cycleCounter++;
 		processor.execInstruction(core.ir);
-		SimulatorMain.dumpState();
-		System.out.println();
+		//System.out.println();
 	}
 	
 	public void fetch()

@@ -24,64 +24,36 @@ import java.util.Scanner;
 
 import com.stephenwan.ljavac3.core.ALU;
 import com.stephenwan.ljavac3.core.Core;
+import com.stephenwan.ljavac3.core.LC3Bridge;
 import com.stephenwan.ljavac3.core.LC3Exception;
 import com.stephenwan.ljavac3.core.Tools;
 public class SimulatorMain {
 	public static void pl(Object o) { System.out.println(o); }
- 	
-	static Core core;
+	public static void pt(Object o) { System.out.print(o); }
 	
-	public static void main(String[] args) throws LC3Exception
+	public static void main(String[] args) throws LC3Exception, IOException
 	{
-		System.out.print("Machine Initializing...");
-		core = new Core();
-		System.out.println(" [OK]\n");
-		core.writeMemory((int)Long.parseLong("30FF", 16), ("1111000011110000"));
-		core.writeMemory((int)Long.parseLong("3100", 16), ("0000000000000100"));
-		System.out.println("Setting memory...");
-		System.out.println("x30FF = " + Tools.int2bin(core.getMemory((int)Long.parseLong("30FF", 16))));
-		System.out.println("x3100 = " + Tools.int2bin(core.getMemory((int)Long.parseLong("3100", 16))));
+		pt("Machine Initializing...");
+		LC3Bridge bridge = new LC3Bridge();
+		pl(" [OK]\n");
+		bridge.writeMemory(Tools.hex2int("30FF"), Tools.bin2int("1111000011110000"));
+		bridge.writeMemory(Tools.hex2int("3100"), Tools.bin2int("0000000000000100"));
+		pl("Setting memory...");
+		pl("x30FF = " + Tools.int2bin(bridge.readMemory(Tools.hex2int("30FF"))));
+		pl("x3100 = " + Tools.int2bin(bridge.readMemory(Tools.hex2int("3100"))));
 
-		System.out.print("\nLoading binary program...");
-		binLoader("/Users/stephen/Desktop/leftrotate.bin");
-		//binLoader("C:/Users/Stephen/Desktop/Git/JavaLC3/bin/com/stephenwan/ljavac3/sim/leftrotate.bin");
-		System.out.println(" [OK]");
+		pt("\nLoading binary program...");
+		//Loader.loadBinary(bridge, "/Users/stephen/Desktop/leftrotate.obj");
+		Loader.loadBinary(bridge, "C:/Users/Stephen/Desktop/leftrotate.obj");
+		pl(" [OK]");
 
-		System.out.print("Executing program... ");
-		core.alu.continueExecution();
-		System.out.println(" [OK]");
+		pt("Executing program... ");
+		bridge.continueExecution();
+		pl(" [OK]");
 
-		System.out.println("Executed " + core.alu.cycleCounter + " instruction(s)\n");
-		System.out.println("Memory Dump");
-		System.out.println("x3101 = " + Tools.int2bin(core.getMemory((int)Long.parseLong("3101", 16))));
+		pl("Executed " + bridge.getProcessedCycles() + " instruction(s)\n");
+		pl("Memory Dump");
+		pl("x3101 = " + Tools.int2bin(bridge.readMemory(Tools.hex2int("3101"))));
 	}
 	
-	public static void binLoader(String file)
-	{
-		try
-		{
-			Scanner sc = new Scanner(new File(file));
-			String sexted = Tools.sext(sc.nextLine().trim());
-			int line = (int)Long.parseLong(sexted, 2);
-			core.pc = line;
-			while (sc.hasNextLine())
-			{
-				String content = sc.nextLine();
-				core.writeMemory(line, content);
-				line++;
-			}
-		}
-		catch (Exception e)
-		{
-			throw new LC3Exception("Failed to load binary file '" + file + "'");
-		}
-	}
-	public static void dumpState()
-	{
-		String l = "[";
-		for (int i = 0; i < core.registers.length; i++)
-			l += Tools.int2bin(core.registers[i]) + (i + 1 == core.registers.length ? "" : ", ");
-		l += "]";
-		pl("\t" + l + " : " + core.alu.cycleCounter);
-	}
 }
