@@ -17,9 +17,6 @@
  ******************************************************************************/
 package com.stephenwan.ljavac3.core;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 public class Tools {
 
 	public static String sext(String input)

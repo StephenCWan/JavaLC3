@@ -17,13 +17,7 @@
  ******************************************************************************/
 package com.stephenwan.ljavac3.sim;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Scanner;
-
-import com.stephenwan.ljavac3.core.ALU;
-import com.stephenwan.ljavac3.core.Core;
 import com.stephenwan.ljavac3.core.LC3Bridge;
 import com.stephenwan.ljavac3.core.LC3Exception;
 import com.stephenwan.ljavac3.core.Tools;
@@ -34,7 +28,7 @@ public class SimulatorMain {
 	public static void main(String[] args) throws LC3Exception, IOException
 	{
 		pt("Machine Initializing...");
-		LC3Bridge bridge = new LC3Bridge();
+		LC3Bridge bridge = new LC3Bridge(new KeyboardIOProvider());
 		pl(" [OK]\n");
 		bridge.writeMemory(Tools.hex2int("30FF"), Tools.bin2int("1111000011110000"));
 		bridge.writeMemory(Tools.hex2int("3100"), Tools.bin2int("0000000000000100"));
@@ -43,8 +37,8 @@ public class SimulatorMain {
 		pl("x3100 = " + Tools.int2bin(bridge.readMemory(Tools.hex2int("3100"))));
 
 		pt("\nLoading binary program...");
-		//Loader.loadBinary(bridge, "/Users/stephen/Desktop/leftrotate.obj");
-		Loader.loadBinary(bridge, "C:/Users/Stephen/Desktop/leftrotate.obj");
+		Loader.loadBinary(bridge, "/Users/stephen/Desktop/leftrotate.obj");
+		//Loader.loadBinary(bridge, "C:/Users/Stephen/Desktop/leftrotate.obj");
 		pl(" [OK]");
 
 		pt("Executing program... ");

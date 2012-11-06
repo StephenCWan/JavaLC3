@@ -17,6 +17,8 @@
  ******************************************************************************/
 package com.stephenwan.ljavac3.core;
 
+import com.stephenwan.ljavac3.sim.IOBridgeProvider;
+
 public class LC3Bridge {
 
 	public int getProcessedCycles()
@@ -24,12 +26,14 @@ public class LC3Bridge {
 		return _core.alu.cycleCounter;
 	}
 	
-	public LC3Bridge()
+	public LC3Bridge(IOBridgeProvider iob)
 	{
 		_core = new Core();
+		_iobridge = iob;
 	}
 	
 	private Core _core;
+	private IOBridgeProvider _iobridge;
 	
 	public void setPC(int location)
 	{
@@ -72,5 +76,11 @@ public class LC3Bridge {
 			l += Tools.int2bin(_core.registers[i]) + (i + 1 == _core.registers.length ? "" : ", ");
 		l += "]";
 		System.out.println("\t" + l + " : " + _core.alu.cycleCounter);
+	}
+	
+	public void reinitializeMachine()
+	{
+		_core.memory.clear();
+		_core.registers = new int[8];
 	}
 }

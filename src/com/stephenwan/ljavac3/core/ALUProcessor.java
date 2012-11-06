@@ -66,8 +66,6 @@ public class ALUProcessor {
 				{
 					int immediate = Tools.bin2int(Tools.sext(sOperands.substring(7)));
 					String result = Integer.toBinaryString(sr1c + immediate);
-					//System.out.println(sr1c + " + " + immediate +  " = " + (sr1c + immediate));
-					//System.out.println(Integer.toBinaryString(sr1c) + " + " + Integer.toBinaryString(immediate) + " = " + result); 
 					alu.core.writeRegister(dr, result);
 				}
 				break;
@@ -106,10 +104,8 @@ public class ALUProcessor {
 			case BR:
 			{
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(3)));
-				if ((Integer.parseInt(sOperands.substring(0,3), 2) & alu.core.nzpFlags) > 0)
-				{
+				if ((Integer.parseInt(sOperands.substring(0,3), 2) & alu.core.nzpFlags) > 0) // check nzp via bitmasks
 					alu.core.movePCRelative(offset);
-				}
 				break;
 			}
 			case JMP:
@@ -159,7 +155,6 @@ public class ALUProcessor {
 			{
 				int dr = Tools.bin2int(sOperands.substring(0, 3));
 				int baser = Tools.bin2int(sOperands.substring(3, 6));
-				int basercontent = alu.core.getRegister(baser);
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(6)));
 				
 				int result = alu.core.getMemory(baser + offset);
@@ -190,6 +185,12 @@ public class ALUProcessor {
 			case RTI:
 			{
 				// not implemented
+				if (alu.core.supervisorMode)
+				{
+					
+				}
+				else
+					throw new LC3Exception("This command can only be invoked in Supervisor mode");
 				break;
 			}
 			case ST:
@@ -227,11 +228,26 @@ public class ALUProcessor {
 			case TRAP:
 			{
 				int vector = Tools.bin2int(sOperands.substring(4));
-				if (vector != 37)
-					System.out.println("Sorry only x25 is implemented at this time :(");
-				// we should go to the trap vector, but it's not implemented
-				// let's just hope it's a halt (x25)... :(
-				alu.executing = false;
+				// interrupts
+				switch (vector)
+				{
+					case 0x20:
+						break;
+					case 0x21:
+						break;
+					case 0x22:
+						break;
+					case 0x23:
+						break;
+					case 0x24:
+						break;
+					
+					// HALT
+					case 0x25:
+						alu.executing = false;
+						break;
+					
+				}
 				break;
 			}
 			default:

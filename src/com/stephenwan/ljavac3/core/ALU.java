@@ -17,10 +17,6 @@
  ******************************************************************************/
 package com.stephenwan.ljavac3.core;
 
-import java.util.Scanner;
-
-import com.stephenwan.ljavac3.sim.SimulatorMain;
-
 public class ALU {
 	public ALU(Core core)
 	{
