@@ -37,7 +37,7 @@ public class SimulatorMain {
 		pl("x3100 = " + Tools.int2bin(bridge.readMemory(Tools.hex2int("3100"))));
 
 		pt("\nLoading binary program...");
-		Loader.loadBinary(bridge, "/Users/stephen/Desktop/leftrotate.obj");
+		//Loader.loadBinary(bridge, "/Users/stephen/Desktop/leftrotate.obj");
 		//Loader.loadBinary(bridge, "C:/Users/Stephen/Desktop/leftrotate.obj");
 		pl(" [OK]");
 

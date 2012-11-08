@@ -17,6 +17,8 @@
  ******************************************************************************/
 package com.stephenwan.ljavac3.core;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 public class ALUProcessor {
 
 	public ALUProcessor(ALU alu)
@@ -238,20 +240,63 @@ public class ALUProcessor {
 				// interrupts
 				switch (vector)
 				{
+					// GETC - read a single letter from keyboard
+					// R0 <- keyboard char
 					case 0x20:
+						try
+						{
+							alu.core.writeRegister(0, alu.core.bridge.waitForChar());
+						}
+						catch (Exception e)
+						{
+							throw new LC3Exception("Failed to read line from IOBridge " + alu.core.bridge.toString());
+						}
 						break;
+						
+					// OUT
+					// display <- R0, bits [7:0]
+						
 					case 0x21:
+						alu.core.bridge.print("" + alu.core.getRegister(0));
 						break;
+						
+					// PUTS
+					// display <- string starting @ R0
 					case 0x22:
-						break;
+						throw new NotImplementedException();
+						//break;
+						
+					// IN
+					// combination of GETC + OUT, get character and print it
 					case 0x23:
+						try
+						{
+							alu.core.writeRegister(0, alu.core.bridge.waitForChar());
+							alu.core.bridge.print("" + alu.core.getRegister(0));
+						}
+						catch (Exception e)
+						{
+							throw new LC3Exception("Failed to read line from IOBridge " + alu.core.bridge.toString());
+						}
 						break;
+						
+					// PUTSP
+					// display <- string starting @ R0, where characters
+					// are placed side by side inside each memory location
+					// the first character in each location is bits [7:0],
+					// followed by the bits in [15:8]
+					//
+					// x00 indicates blank in the last character possibly
+					// x0000 indicates end of string
 					case 0x24:
-						break;
+						throw new NotImplementedException();
+						//break;
 					
 					// HALT
+					// halt processor execution, print message to display
 					case 0x25:
 						alu.executing = false;
+						alu.core.bridge.printLine("Halting the processor!");
 						break;
 					
 				}

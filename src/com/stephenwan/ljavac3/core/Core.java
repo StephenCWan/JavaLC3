@@ -19,7 +19,9 @@ package com.stephenwan.ljavac3.core;
 
 import java.util.TreeMap;
 
-public class Core {
+import com.stephenwan.ljavac3.sim.IOBridgeProvider;
+
+class Core {
 	
 	//
 	// In this implementation we must use integers rather than shorts to carry our data. This is because
@@ -39,6 +41,7 @@ public class Core {
 		alu = new ALU(this);
 	}
 	
+	public IOBridgeProvider bridge;
 	public ALU alu;
 	public int[] registers;
 	public int pc;

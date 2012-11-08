@@ -24,4 +24,16 @@ public class KeyboardIOProvider implements IOBridgeProvider {
 		return stream.readChar();
 	}
 
+	@Override
+	public void printLine(Object o) {
+		// TODO Auto-generated method stub
+		System.out.println(o);
+	}
+
+	@Override
+	public void print(Object o) {
+		// TODO Auto-generated method stub
+		System.out.print(o);
+	}
+
 }
