@@ -30,7 +30,6 @@ public class ALUProcessor {
 		BR, ADD, LD, ST, JSR, AND, LDR, STR, RTI, NOT, LDI, STI, JMP, INVALID, LEA, TRAP
 	}
 	public static String[] InstructionT = { "BR", "ADD", "LD", "ST", "JSR", "AND", "LDR", "STR", "RTI", "NOT", "LDI", "STI", "JMP", "INVALID", "LEA", "TRAP" };
-	public static String[] InstructionMatchers = { "BRn{0-1}z{0-1}p{0-1}", "ADD", "LD", "ST", "JSR", "AND", "LDR", "STR", "RTI", "NOT", "LDI", "STI", "JMP", "INVALID", "LEA", "TRAP" };
 	
 	public ALU alu;
 	public Instruction[] cache;
@@ -103,6 +102,7 @@ public class ALUProcessor {
 			}
 			case BR:
 			{
+				// if nzp offset specified == current nzp flags, branch
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(3)));
 				if ((Integer.parseInt(sOperands.substring(0,3), 2) & alu.core.nzpFlags) > 0) // check nzp via bitmasks
 					alu.core.movePCRelative(offset);
@@ -134,6 +134,7 @@ public class ALUProcessor {
 			}
 			case LD:
 			{
+				// dr <- mem[PC + offset]
 				int dr = Tools.bin2int(sOperands.substring(0, 3));
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(3)));
 				
@@ -144,6 +145,7 @@ public class ALUProcessor {
 			}
 			case LDI:
 			{
+				// dr <- mem[mem[PC + offset]]
 				int dr = Tools.bin2int(sOperands.substring(0, 3));
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(3)));
 				int result = alu.core.getMemory(alu.core.getMemory(offset + alu.core.pc));
@@ -153,6 +155,7 @@ public class ALUProcessor {
 			}
 			case LDR:
 			{
+				// dr <- mem[baser + offset]
 				int dr = Tools.bin2int(sOperands.substring(0, 3));
 				int baser = Tools.bin2int(sOperands.substring(3, 6));
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(6)));
@@ -164,6 +167,7 @@ public class ALUProcessor {
 			}
 			case LEA:
 			{
+				// dr <- pc + offset
 				int dr = Tools.bin2int(sOperands.substring(0, 3));
 				int offset = Tools.bin2int(Tools.sext(sOperands).substring(3));
 				String result = Integer.toBinaryString(alu.core.pc + offset);
@@ -195,6 +199,7 @@ public class ALUProcessor {
 			}
 			case ST:
 			{
+				// mem[pc + offset] <- sr
 				int sr = Tools.bin2int(sOperands.substring(0, 3));
 				int src = alu.core.getRegister(sr);
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(3)));
@@ -204,17 +209,19 @@ public class ALUProcessor {
 			}
 			case STI:
 			{
+				// mem[mem[pc + offset]] <- sr
 				int sr = Tools.bin2int(sOperands.substring(0, 3));
 				int src = alu.core.getRegister(sr);
 				int offset = Tools.bin2int(Tools.sext(sOperands.substring(3)));
 				
-				int location = alu.core.getMemory(alu.core.pc + offset);
+				int location = alu.core.getMemory(alu.core.getMemory(alu.core.pc + offset));
 				
 				alu.core.writeMemory(location, src);
 				break;
 			}
 			case STR:
 			{
+				// mem[baser + offset] <- sr
 				int sr = Tools.bin2int(sOperands.substring(0, 3));
 				int src = alu.core.getRegister(sr);
 				int baser = Tools.bin2int(sOperands.substring(3, 6));
